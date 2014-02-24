@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>
+			Document
+		</title>
+		<link rel="stylesheet" href="http://js.arcgis.com/3.6/js/esri/css/esri.css">
+		<style type="text/css">
+html, body, #mapDiv {
+		padding:0;
+		margin:0;
+		height:100%;
+		}
+		</style>
+		<script type="text/javascript">
+		var pathRegex = new RegExp(/\/[^\/]+$/);
+		var locationPath = location.pathname.replace(pathRegex, '');
+		// Dojo Config
+		var dojoConfig = {
+			parseOnLoad: true,
+			packages: [
+			{
+				name: "bgText",
+				location: locationPath + '/bgText'
+			}
+			]
+		};
+		</script>
+		<script type="text/javascript" src="http://js.arcgis.com/3.6/"></script>
+		<script type="text/javascript">	
+		require(["esri/map","esri/symbols/SimpleLineSymbol","esri/symbols/SimpleFillSymbol","esri/symbols/Font","esri/symbols/TextSymbol","dojo/_base/Color", "dojo/dom", "dojo/on", "bgText/bgTextGraphic", "bgText/bgTextGraphicLayer", "dojo/domReady!"], function(
+	Map,
+	SimpleLineSymbol,
+	SimpleFillSymbol, Font, TextSymbol,
+	Color, dom, on, bgTextGraphic, bgTextGraphicLayer
+) {
+	var map, bgTextGraphicLayer;
+	map = new Map("mapDiv", {
+		basemap: "streets",
+		center: [-25.312, 34.307],
+		zoom: 3
+	});
+	bgTextGraphicLayer = new bgTextGraphicLayer();
+	map.addLayer(bgTextGraphicLayer);
+	map.on('click', addGraphic);
+
+	function addGraphic(evt) {
+		//deactivate the toolbar and clear existing
+		var sfs = new SimpleFillSymbol(
+			SimpleFillSymbol.STYLE_SOLID,
+			new SimpleLineSymbol(SimpleLineSymbol.STYLE_NULL),
+			new Color([0, 0, 255, 0.5]));
+		var font = new Font("22px", Font.STYLE_NORMAL, Font.VARIANT_NORMAL, Font.WEIGHT_BOLDER);
+		var ts = new TextSymbol("Hello,EsriChina!", font, new Color([0, 0, 0]));
+		ts.setAlign(Font.ALIGN_START);
+		var graphic = new bgTextGraphic(evt.mapPoint, ts, sfs);
+		bgTextGraphicLayer.add(graphic);
+	}
+});
+		</script>
+	</head>
+	<body>
+		<div id="mapDiv"></div>
+	</body>
+</html>
